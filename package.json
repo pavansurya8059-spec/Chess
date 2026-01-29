@@ -1,0 +1,17 @@
+{
+  "name": "chess-game",
+  "version": "1.0.0",
+  "description": "Single & Multiplayer Chess Game",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server -c-1 -o -p 8080",
+    "dev": "npx http-server -c-1 -p 3000",
+    "build": "echo 'Static files ready for deployment'"
+  },
+  "keywords": ["chess", "game", "multiplayer"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

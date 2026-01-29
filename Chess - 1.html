@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chess Game – Single & Multiplayer</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #222;
+    color: white;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#game {
+    display: grid;
+    grid-template-columns: repeat(8, 70px);
+    grid-template-rows: repeat(8, 70px);
+    border: 4px solid #333;
+}
+
+.square {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 42px;
+    cursor: pointer;
+}
+
+.white { background: #f0d9b5; }
+.black { background: #b58863; }
+
+#panel {
+    margin-left: 20px;
+    width: 220px;
+}
+
+button, select, input {
+    width: 100%;
+    margin-top: 8px;
+    padding: 6px;
+    font-size: 14px;
+}
+
+.timer, .score {
+    margin-top: 10px;
+    font-size: 16px;
+}
+</style>
+</head>
+<body>
+
+<div id="game"></div>
+
+<div id="panel">
+    <h3>Chess Game</h3>
+
+    <select id="mode">
+        <option value="single">Single Player</option>
+        <option value="multi">Multiplayer</option>
+    </select>
+
+    <select id="level">
+        <option value="easy">Easy AI</option>
+        <option value="medium">Medium AI</option>
+        <option value="hard">Hard AI</option>
+    </select>
+
+    <input id="gameId" placeholder="Game ID (Multiplayer)">
+    <button onclick="startGame()">Start Game</button>
+
+    <div class="timer">White Time: <span id="wtime">300</span>s</div>
+    <div class="timer">Black Time: <span id="btime">300</span>s</div>
+
+    <div class="score">White Score: <span id="wscore">0</span></div>
+    <div class="score">Black Score: <span id="bscore">0</span></div>
+</div>
+
+<script>
+const boardEl = document.getElementById("game");
+let selected = null;
+let turn = "white";
+let mode = "single";
+
+let whiteTime = 300;
+let blackTime = 300;
+
+const pieces = {
+    r:"♜", n:"♞", b:"♝", q:"♛", k:"♚", p:"♟",
+    R:"♖", N:"♘", B:"♗", Q:"♕", K:"♔", P:"♙"
+};
+
+let board = [
+["r","n","b","q","k","b","n","r"],
+["p","p","p","p","p","p","p","p"],
+["","","","","","","",""],
+["","","","","","","",""],
+["","","","","","","",""],
+["","","","","","","",""],
+["P","P","P","P","P","P","P","P"],
+["R","N","B","Q","K","B","N","R"]
+];
+
+function drawBoard() {
+    boardEl.innerHTML = "";
+    for (let r=0;r<8;r++) {
+        for (let c=0;c<8;c++) {
+            const sq = document.createElement("div");
+            sq.className = "square " + ((r+c)%2==0 ? "white":"black");
+            sq.dataset.r = r;
+            sq.dataset.c = c;
+            sq.innerHTML = pieces[board[r][c]] || "";
+            sq.onclick = () => clickSquare(r,c);
+            boardEl.appendChild(sq);
+        }
+    }
+    updateScore();
+}
+
+function clickSquare(r,c) {
+    if (!selected) {
+        selected = {r,c};
+    } else {
+        move(selected.r, selected.c, r, c);
+        selected = null;
+    }
+}
+
+function move(r1,c1,r2,c2) {
+    let piece = board[r1][c1];
+    if (!piece) return;
+
+    // Pawn movement (basic rules)
+    if (piece.toLowerCase()=="p") {
+        let dir = piece=="P" ? -1 : 1;
+        if (c1===c2 && board[r2][c2]=="" && r2===r1+dir ||
+            Math.abs(c2-c1)==1 && r2===r1+dir && board[r2][c2]!="") {
+            board[r2][c2]=piece;
+            board[r1][c1]="";
+        } else return;
+    } else {
+        board[r2][c2]=piece;
+        board[r1][c1]="";
+    }
+
+    turn = turn=="white" ? "black":"white";
+    drawBoard();
+
+    if (mode=="single" && turn=="black") aiMove();
+}
+
+function aiMove() {
+    let moves=[];
+    for (let r=0;r<8;r++)
+        for (let c=0;c<8;c++)
+            if (board[r][c] && board[r][c]==board[r][c].toLowerCase())
+                moves.push({r,c});
+
+    let m = moves[Math.floor(Math.random()*moves.length)];
+    let r2 = m.r+1<8?m.r+1:m.r;
+    board[r2][m.c]=board[m.r][m.c];
+    board[m.r][m.c]="";
+    turn="white";
+    drawBoard();
+}
+
+function updateScore() {
+    const values = {p:1,n:3,b:3,r:5,q:9};
+    let w=0,b=0;
+    board.flat().forEach(p=>{
+        if (!p) return;
+        if (p===p.toUpperCase()) w+=values[p.toLowerCase()]||0;
+        else b+=values[p]||0;
+    });
+    wscore.innerText=w;
+    bscore.innerText=b;
+}
+
+function startGame() {
+    mode = document.getElementById("mode").value;
+    drawBoard();
+}
+
+// Timer
+setInterval(()=>{
+    if (turn=="white") whiteTime--;
+    else blackTime--;
+    wtime.innerText=whiteTime;
+    btime.innerText=blackTime;
+},1000);
+
+drawBoard();
+</script>
+</body>
+</html>

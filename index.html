@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="left-section">
+            <h1>♟ CHESS ♟</h1>
+            
+            <div class="board-container">
+                <div id="chessboard" class="chessboard"></div>
+            </div>
+        </div>
+
+        <div class="right-section">
+            <div class="control-panel">
+                <h2>Controls</h2>
+                
+                <div class="control-group">
+                    <label>Mode:</label>
+                    <select id="mode">
+                        <option value="single">Single Player</option>
+                        <option value="multi">Multiplayer</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Difficulty:</label>
+                    <select id="difficulty">
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-start" onclick="startNewGame()">START</button>
+                <button class="btn btn-reset" onclick="resetGame()">RESET</button>
+
+                <div class="info-section">
+                    <div class="info-item">
+                        <span class="label">Turn:</span>
+                        <span id="currentTurn" class="value">WHITE</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Moves:</span>
+                        <span id="moveCount" class="value">0</span>
+                    </div>
+                </div>
+
+                <div class="timer-section">
+                    <div class="timer-item white-timer">
+                        <span class="timer-label">♔ White</span>
+                        <span id="whiteTime" class="timer-value">5:00</span>
+                    </div>
+                    <div class="timer-item black-timer">
+                        <span class="timer-label">♚ Black</span>
+                        <span id="blackTime" class="timer-value">5:00</span>
+                    </div>
+                </div>
+
+                <div class="score-section">
+                    <div class="score-item white-score">
+                        <span class="score-label">White</span>
+                        <span id="whiteScore" class="score-value">39</span>
+                    </div>
+                    <div class="score-item black-score">
+                        <span class="score-label">Black</span>
+                        <span id="blackScore" class="score-value">39</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkmate Notification -->
+    <div id="notification" class="notification">
+        <div class="notification-content">
+            <h3 id="notificationTitle">CHECKMATE!</h3>
+            <p id="notificationMessage"></p>
+            <button onclick="closeNotification()">OK</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
